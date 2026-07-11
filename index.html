@@ -1,313 +1,327 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的项目 — 今晚吃什么</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>闫开鑫 — 个人简历 & 项目展示</title>
+<style>
+  :root {
+    --brand-50: #FFF7ED;
+    --brand-100: #FFEDD5;
+    --brand-300: #FDBA74;
+    --brand-500: #F97316;
+    --brand-600: #EA580C;
+    --brand-700: #C2410C;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+  }
 
-    :root {
-      --brand-50: #FFF7ED;
-      --brand-100: #FFEDD5;
-      --brand-300: #FDBA74;
-      --brand-500: #F97316;
-      --brand-600: #EA580C;
-      --brand-700: #C2410C;
-    }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-      color: #1F2937;
-      background: #F9FAFB;
-      line-height: 1.6;
-    }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--gray-800);
+    background: var(--gray-50);
+    line-height: 1.7;
+  }
 
-    /* 顶部 Hero */
-    .hero {
-      background: linear-gradient(135deg, var(--brand-600), var(--brand-500), #FB923C);
-      color: white;
-      padding: 80px 20px 60px;
-      text-align: center;
-    }
-    .hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
-    .hero .emoji { font-size: 4rem; margin-bottom: 16px; }
-    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 500px; margin: 0 auto; }
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #9A3412, var(--brand-600), var(--brand-500));
+    color: white;
+    padding: 60px 20px 50px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.2rem; letter-spacing: 2px; margin-bottom: 8px; }
+  .hero .subtitle { font-size: 1rem; opacity: 0.85; margin-bottom: 16px; }
+  .hero .contact {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+    font-size: 0.85rem; opacity: 0.8;
+  }
 
-    /* 容器 */
-    .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+  /* ===== LAYOUT ===== */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 20px; }
 
-    /* 区块 */
-    section { padding: 60px 0; }
-    section h2 {
-      font-size: 1.6rem;
-      margin-bottom: 30px;
-      text-align: center;
-      color: var(--brand-700);
-    }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
 
-    /* 项目展示卡片 */
-    .project-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      margin-bottom: 40px;
-    }
-    .project-preview {
-      background: linear-gradient(135deg, var(--brand-500), #FB923C);
-      padding: 60px 20px;
-      text-align: center;
-      color: white;
-    }
-    .project-preview .phone-mockup {
-      display: inline-block;
-      background: white;
-      border-radius: 24px;
-      padding: 20px 16px 10px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      max-width: 260px;
-    }
-    .mockup-header {
-      background: var(--brand-500);
-      color: white;
-      border-radius: 12px 12px 0 0;
-      padding: 10px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .mockup-body {
-      padding: 20px 10px;
-      text-align: center;
-      color: #333;
-    }
-    .mockup-body .big-emoji { font-size: 3rem; }
-    .mockup-body .title { font-weight: bold; margin: 8px 0 6px; color: #1F2937; }
-    .mockup-body .subtitle { font-size: 0.75rem; color: #9CA3AF; }
-    .mockup-search {
-      margin: 12px 0;
-      padding: 8px 12px;
-      background: #F3F4F6;
-      border-radius: 20px;
-      text-align: left;
-      font-size: 0.75rem;
-      color: #9CA3AF;
-    }
-    .mockup-btn {
-      display: block;
-      background: var(--brand-500);
-      color: white;
-      padding: 10px;
-      border-radius: 24px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      margin: 8px 0;
-    }
-    .mockup-tabs {
-      display: flex;
-      justify-content: space-around;
-      font-size: 0.65rem;
-      color: #9CA3AF;
-      border-top: 1px solid #F3F4F6;
-      padding-top: 8px;
-    }
+  section { padding: 36px 0; }
+  .section-title {
+    font-size: 1.3rem; font-weight: 700; color: var(--brand-700);
+    border-bottom: 3px solid var(--brand-300); padding-bottom: 6px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
 
-    .project-info {
-      padding: 30px;
-    }
-    .project-info h3 { font-size: 1.4rem; margin-bottom: 10px; }
-    .project-info p { color: #6B7280; margin-bottom: 20px; }
-    .tags {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
-    }
-    .tag {
-      background: var(--brand-50);
-      color: var(--brand-600);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-    }
-    .links {
-      display: flex; gap: 12px; flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-block;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: all 0.2s;
-    }
-    .btn-primary {
-      background: var(--brand-500);
-      color: white;
-    }
-    .btn-primary:hover { background: var(--brand-600); }
-    .btn-outline {
-      border: 2px solid var(--brand-300);
-      color: var(--brand-600);
-    }
-    .btn-outline:hover { background: var(--brand-50); }
+  /* ===== CARDS ===== */
+  .card {
+    background: white; border-radius: 12px; padding: 20px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 16px;
+  }
+  .card h3 { font-size: 1rem; color: var(--gray-800); margin-bottom: 4px; }
+  .card .meta { font-size: 0.8rem; color: var(--gray-400); margin-bottom: 10px; }
+  .card .meta strong { color: var(--brand-600); }
 
-    /* 功能列表 */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-    .feature {
-      background: white;
-      padding: 24px;
-      border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-    }
-    .feature .icon { font-size: 2rem; margin-bottom: 12px; }
-    .feature h4 { font-size: 1rem; margin-bottom: 6px; }
-    .feature p { font-size: 0.85rem; color: #6B7280; }
+  /* ===== TAGS ===== */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+  .tag {
+    background: var(--brand-50); color: var(--brand-700);
+    padding: 3px 10px; border-radius: 12px; font-size: 0.78rem;
+  }
 
-    /* 技术栈 */
-    .tech-stack {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
-    }
-    .tech {
-      background: white;
-      padding: 8px 18px;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    }
+  /* ===== LISTS ===== */
+  .exp-list { list-style: none; }
+  .exp-list li {
+    position: relative; padding-left: 18px; margin-bottom: 10px;
+    font-size: 0.9rem; color: var(--gray-700); line-height: 1.7;
+  }
+  .exp-list li::before {
+    content: ''; position: absolute; left: 0; top: 9px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--brand-400);
+  }
 
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      color: #9CA3AF;
-      font-size: 0.85rem;
-    }
-    footer a { color: var(--brand-500); }
-  </style>
+  /* ===== EDUCATION ===== */
+  .edu-item { margin-bottom: 14px; }
+  .edu-item .school { font-weight: 700; font-size: 0.95rem; }
+  .edu-item .degree { font-size: 0.85rem; color: var(--gray-500); }
+  .edu-item .honors { font-size: 0.8rem; color: var(--gray-500); margin-top: 2px; }
+
+  /* ===== PROJECT SHOWCASE ===== */
+  .project-card {
+    background: white; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06); margin-bottom: 24px;
+  }
+  .project-header {
+    background: linear-gradient(135deg, var(--brand-500), #FB923C);
+    color: white; padding: 20px 24px;
+  }
+  .project-header h3 { font-size: 1.05rem; margin-bottom: 2px; }
+  .project-header .time { font-size: 0.8rem; opacity: 0.8; }
+  .project-body { padding: 20px 24px; }
+  .project-body .item { margin-bottom: 10px; font-size: 0.88rem; color: var(--gray-700); line-height: 1.7; }
+  .project-body .item::before { content: '▸ '; color: var(--brand-500); font-weight: bold; }
+  .project-stats {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid var(--gray-100);
+  }
+  .stat {
+    background: var(--brand-50); color: var(--brand-700);
+    padding: 6px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+  }
+
+  /* ===== PERSONAL ===== */
+  .personal-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 500px) { .personal-list { grid-template-columns: 1fr; } }
+  .personal-list li {
+    font-size: 0.88rem; color: var(--gray-700); list-style: none;
+    padding: 8px 14px; background: var(--brand-50); border-radius: 8px;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+
+  /* ===== DINNER PROJECT ===== */
+  .dinner-showcase {
+    background: linear-gradient(135deg, var(--brand-50), white);
+    border: 2px solid var(--brand-100); border-radius: 16px;
+    padding: 24px; text-align: center;
+  }
+  .dinner-showcase .big-emoji { font-size: 3rem; }
+  .dinner-showcase .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .btn {
+    display: inline-block; padding: 10px 22px; border-radius: 24px;
+    font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--brand-500); color: white; }
+  .btn-primary:hover { background: var(--brand-600); }
+  .btn-outline { border: 2px solid var(--brand-300); color: var(--brand-600); }
+  .btn-outline:hover { background: var(--brand-50); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    text-align: center; padding: 40px 20px;
+    color: var(--gray-400); font-size: 0.82rem;
+  }
+  footer a { color: var(--brand-500); }
+</style>
 </head>
 <body>
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="emoji">🍽️</div>
-    <h1>今晚吃什么</h1>
-    <p>AI 智能菜谱推荐助手 — 打字说、拍食材，告诉你想吃啥，给你时令食谱和附近餐厅</p>
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <h1>闫开鑫</h1>
+  <div class="subtitle">产品经理 · 中山大学硕士研究生 · 中共党员</div>
+  <div class="contact">
+    <span>📧 3337601901@qq.com</span>
+    <span>📱 13054219933</span>
+    <span>📍 广东珠海</span>
+    <span>🎂 2002.11 · 汉</span>
+  </div>
+</div>
+
+<!-- ===== 教育经历 ===== -->
+<section>
+<div class="container">
+  <div class="section-title">🎓 教育经历</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="edu-item">
+        <div class="school">中山大学 <span class="tag">985</span></div>
+        <div class="degree">硕士研究生 · 推免入学</div>
+        <div class="meta">2024.09 ~ 至今</div>
+        <div class="honors">
+          2026年度优秀党员 · 2025年度一星级志愿者
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="edu-item">
+        <div class="school">东北农业大学 <span class="tag">211</span></div>
+        <div class="degree">本科 · 排名 3/43</div>
+        <div class="meta">2020.09 ~ 2024.06</div>
+        <div class="honors">
+          2024届优秀毕业生 · 黑龙江省三好学生 · 校五好学生 · 优秀共青团干部 · 社会工作奖学金
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===== 专业技能 ===== -->
+<section style="padding-top:0;">
+<div class="container">
+  <div class="section-title">🛠 专业技能</div>
+  <div class="card">
+    <div class="tags">
+      <span class="tag">Python</span>
+      <span class="tag">Grapher</span>
+      <span class="tag">ArcGIS</span>
+      <span class="tag">Origin</span>
+      <span class="tag">CorelDRAW</span>
+      <span class="tag">Illustrator</span>
+      <span class="tag">Office</span>
+      <span class="tag">GMT</span>
+      <span class="tag">Vibe Coding</span>
+      <span class="tag">Prompt Engineering</span>
+      <span class="tag">PRD 撰写</span>
+    </div>
+    <p style="margin-top:10px;font-size:0.88rem;color:var(--gray-500);">
+      🏭 大型设备管理：管理千万级科研设备 ICP-MS、ICP-OES 等
+    </p>
+  </div>
+</div>
+</section>
+
+<!-- ===== 项目经历 ===== -->
+<section style="padding-top:0;">
+<div class="container">
+  <div class="section-title">📁 项目经历</div>
+
+  <!-- 项目1 -->
+  <div class="project-card">
+    <div class="project-header">
+      <h3>AI 个性化旅行攻略定制产品</h3>
+      <div class="time">产品负责人 · 2026.03 ~ 2026.07</div>
+    </div>
+    <div class="project-body">
+      <p class="item">调研 18-28 岁出行用户，拆解小红书、去哪儿等竞品，定位攻略分散、广告过载痛点，输出标准化 PRD</p>
+      <p class="item">搭建预算、出行节奏等多维度用户标签实现千人千面，规划覆盖出行全流程的 UX 交互链路</p>
+      <p class="item">使用 Vibe Coding + Prompt 工程完成产品 0-1 搭建，定制场景 Prompt、路线排序算法、可视化可编辑行程模板</p>
+      <p class="item">汇总内测异常案例归因优化，调整 Prompt 权重、细化场景模板，提升个性化匹配精度</p>
+      <div class="project-stats">
+        <span class="stat">📊 迭代 6 套 Prompt</span>
+        <span class="stat">🎯 内容适配度 +83%</span>
+        <span class="stat">⚡ 规划效率 +80%</span>
+      </div>
+    </div>
   </div>
 
-  <!-- 项目展示 -->
-  <section>
-    <div class="container">
-      <div class="project-card">
-        <div class="project-preview">
-          <!-- 手机模拟图 -->
-          <div class="phone-mockup">
-            <div class="mockup-header">🍽️ 今晚吃什么</div>
-            <div class="mockup-body">
-              <div class="big-emoji">🍜</div>
-              <div class="title">今天想吃什么？</div>
-              <div class="subtitle">告诉我你的口味，帮你找到最合适的菜</div>
-              <div class="mockup-search">🔍 比如："天热想吃清爽酸辣的"</div>
-              <div class="mockup-btn">📸 拍照搜菜</div>
-              <div class="mockup-btn" style="background:white; color:var(--brand-500); border:2px dashed var(--brand-300);">🎲 随便看看</div>
-            </div>
-            <div class="mockup-tabs">
-              <span style="color:var(--brand-500);">🏠 首页</span>
-              <span>🔍 菜谱</span>
-              <span>🏪 餐厅</span>
-              <span>👤 我的</span>
-            </div>
-          </div>
-        </div>
-        <div class="project-info">
-          <h3>📱 AI 驱动的智能菜谱推荐</h3>
-          <p>再也不用纠结"今晚吃什么"了！三种方式告诉系统你想吃啥，AI 理解你的口味，结合季节时令和地理位置，给你最合适的菜谱和附近餐厅推荐。</p>
-          <div class="tags">
-            <span class="tag">Next.js 14</span>
-            <span class="tag">TypeScript</span>
-            <span class="tag">AI 推荐</span>
-            <span class="tag">DeepSeek</span>
-            <span class="tag">Claude</span>
-            <span class="tag">Tailwind CSS</span>
-            <span class="tag">Prisma</span>
-            <span class="tag">SQLite</span>
-          </div>
-          <div class="links">
-            <a href="https://github.com/yankaixin-claire/dinner-recommender" class="btn btn-primary">🔗 查看项目</a>
-            <a href="https://github.com/yankaixin-claire/dinner-recommender" class="btn btn-outline">⭐ Star on GitHub</a>
-          </div>
-        </div>
+  <!-- 项目2 -->
+  <div class="project-card">
+    <div class="project-header">
+      <h3>基于 Vibe Coding 的 AI 个性化每日运势生成产品</h3>
+      <div class="time">个人项目 · 2025.10 ~ 2026.01</div>
+    </div>
+    <div class="project-body">
+      <p class="item">调研 18-28 岁用户运势查看习惯，竞品分析发现界面繁琐、场景适配弱问题，聚焦学生与职场新人，输出 PRD</p>
+      <p class="item">搭建多维度用户画像与标签体系，模块化设计事业、情感、财运、宜忌等核心内容，实现千人千面分发</p>
+      <p class="item">基于 Vibe Coding + Prompt 工程完成 0-1 搭建，定制场景化 Prompt 模板统一调性，配置内容风控机制</p>
+      <p class="item">搭建留存、停留时长、好评率指标体系，针对内容生硬、重复等 Bad Case 归因优化，迭代 5 版 Prompt</p>
+      <div class="project-stats">
+        <span class="stat">🔄 内容重复率 -73%</span>
+        <span class="stat">🎯 个性化匹配度 +81%</span>
+        <span class="stat">📈 阅读时长 +45%</span>
+        <span class="stat">🔁 次日留存 +28%</span>
+        <span class="stat">⭐ 好评率 >94%</span>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- 核心功能 -->
-  <section>
-    <div class="container">
-      <h2>✨ 核心功能</h2>
-      <div class="features">
-        <div class="feature">
-          <div class="icon">💬</div>
-          <h4>自然语言搜索</h4>
-          <p>用日常语言描述口味，AI 理解意图并匹配菜谱</p>
-        </div>
-        <div class="feature">
-          <div class="icon">📸</div>
-          <h4>拍照识别食材</h4>
-          <p>拍冰箱/食材照片，自动识别并推荐能做的菜</p>
-        </div>
-        <div class="feature">
-          <div class="icon">🌞</div>
-          <h4>季节时令推荐</h4>
-          <p>根据当前季节自动推荐当季食材和应季菜品</p>
-        </div>
-        <div class="feature">
-          <div class="icon">🏪</div>
-          <h4>附近餐厅搜索</h4>
-          <p>获取你的位置，推荐周边能吃到对应菜品的餐厅</p>
-        </div>
-        <div class="feature">
-          <div class="icon">👤</div>
-          <h4>个人偏好记忆</h4>
-          <p>注册账号，记住辣度、忌口、菜系偏好</p>
-        </div>
-        <div class="feature">
-          <div class="icon">📖</div>
-          <h4>63 道菜谱库</h4>
-          <p>内置中式家常菜谱，含完整食材和步骤说明</p>
-        </div>
+  <!-- 项目3 -->
+  <div class="project-card">
+    <div class="project-header">
+      <h3>AI 可编辑图表生成工具</h3>
+      <div class="time">产品负责人 · 校级大创项目 · 2025.05 ~ 2025.09</div>
+    </div>
+    <div class="project-body">
+      <p class="item">调研办公、学生群体，挖掘制图门槛高、AI 图表不可编辑、数据匹配失真等痛点，输出完整 PRD</p>
+      <p class="item">设计全链路 UX 交互流程：自然语言录入 → AI 字段解析 → 图表智能推荐 → 可视化可编辑渲染 → 多格式导出</p>
+      <p class="item">采用 Vibe Coding + Prompt 工程快速搭建 Demo，定制办公场景 Prompt 库，解决维度识别偏差、格式错乱等问题</p>
+      <p class="item">对内测 Bad Case 复盘归因，搭建输入容错、手动调整纠错机制，优化批量数据渲染性能</p>
+      <div class="project-stats">
+        <span class="stat">🎯 匹配准确率 98.5%</span>
+        <span class="stat">✅ 生成成功率 96%</span>
+        <span class="stat">⚡ 制图效率 +87%</span>
       </div>
     </div>
-  </section>
+  </div>
+</div>
+</section>
 
-  <!-- 技术栈 -->
-  <section>
-    <div class="container">
-      <h2>🛠 技术栈</h2>
-      <div class="tech-stack">
-        <span class="tech">Next.js 14</span>
-        <span class="tech">TypeScript</span>
-        <span class="tech">Tailwind CSS</span>
-        <span class="tech">Prisma ORM</span>
-        <span class="tech">SQLite</span>
-        <span class="tech">NextAuth.js</span>
-        <span class="tech">DeepSeek AI</span>
-        <span class="tech">Claude AI</span>
-        <span class="tech">高德地图 API</span>
-        <span class="tech">Docker</span>
-      </div>
+<!-- ===== 个人画像 ===== -->
+<section style="padding-top:0;">
+<div class="container">
+  <div class="section-title">💡 个人画像</div>
+  <div class="card">
+    <ul class="personal-list">
+      <li>🔧 从 0-1 产品搭建与迭代能力</li>
+      <li>🔍 熟练检索与阅读文献能力</li>
+      <li>🤖 熟练使用 Vibe Coding</li>
+      <li>📊 处理上万条实验数据</li>
+      <li>🤝 良好团队协作与执行力</li>
+      <li>📋 严谨细致的工作态度</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ===== 项目展示 ===== -->
+<section>
+<div class="container">
+  <div class="section-title">🚀 作品展示</div>
+  <div class="dinner-showcase">
+    <div class="big-emoji">🍽️</div>
+    <h3 style="margin:8px 0;">今晚吃什么 — AI 智能菜谱推荐助手</h3>
+    <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:4px;">
+      Next.js + TypeScript + DeepSeek AI + Prisma + Tailwind CSS
+    </p>
+    <p style="color:var(--gray-400);font-size:0.82rem;">
+      自然语言搜索 · 拍照识食材 · 季节时令推荐 · 63 道菜谱 · 餐厅推荐 · 用户偏好
+    </p>
+    <div class="btn-row">
+      <a href="https://github.com/yankaixin-claire/dinner-recommender" class="btn btn-primary">🔗 查看项目</a>
+      <a href="https://github.com/yankaixin-claire/dinner-recommender" class="btn btn-outline">⭐ Star</a>
     </div>
-  </section>
+  </div>
+</div>
+</section>
 
-  <footer>
-    <p>Built with ❤️ | <a href="https://github.com/yankaixin-claire">github.com/yankaixin-claire</a></p>
-  </footer>
+<footer>
+  <p>© 2026 闫开鑫 · <a href="https://github.com/yankaixin-claire">github.com/yankaixin-claire</a></p>
+</footer>
 
 </body>
 </html>
