@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的项目 — 今晚吃什么</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --brand-50: #FFF7ED;
+      --brand-100: #FFEDD5;
+      --brand-300: #FDBA74;
+      --brand-500: #F97316;
+      --brand-600: #EA580C;
+      --brand-700: #C2410C;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #1F2937;
+      background: #F9FAFB;
+      line-height: 1.6;
+    }
+
+    /* 顶部 Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--brand-600), var(--brand-500), #FB923C);
+      color: white;
+      padding: 80px 20px 60px;
+      text-align: center;
+    }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .hero .emoji { font-size: 4rem; margin-bottom: 16px; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 500px; margin: 0 auto; }
+
+    /* 容器 */
+    .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+
+    /* 区块 */
+    section { padding: 60px 0; }
+    section h2 {
+      font-size: 1.6rem;
+      margin-bottom: 30px;
+      text-align: center;
+      color: var(--brand-700);
+    }
+
+    /* 项目展示卡片 */
+    .project-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      margin-bottom: 40px;
+    }
+    .project-preview {
+      background: linear-gradient(135deg, var(--brand-500), #FB923C);
+      padding: 60px 20px;
+      text-align: center;
+      color: white;
+    }
+    .project-preview .phone-mockup {
+      display: inline-block;
+      background: white;
+      border-radius: 24px;
+      padding: 20px 16px 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      max-width: 260px;
+    }
+    .mockup-header {
+      background: var(--brand-500);
+      color: white;
+      border-radius: 12px 12px 0 0;
+      padding: 10px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mockup-body {
+      padding: 20px 10px;
+      text-align: center;
+      color: #333;
+    }
+    .mockup-body .big-emoji { font-size: 3rem; }
+    .mockup-body .title { font-weight: bold; margin: 8px 0 6px; color: #1F2937; }
+    .mockup-body .subtitle { font-size: 0.75rem; color: #9CA3AF; }
+    .mockup-search {
+      margin: 12px 0;
+      padding: 8px 12px;
+      background: #F3F4F6;
+      border-radius: 20px;
+      text-align: left;
+      font-size: 0.75rem;
+      color: #9CA3AF;
+    }
+    .mockup-btn {
+      display: block;
+      background: var(--brand-500);
+      color: white;
+      padding: 10px;
+      border-radius: 24px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .mockup-tabs {
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.65rem;
+      color: #9CA3AF;
+      border-top: 1px solid #F3F4F6;
+      padding-top: 8px;
+    }
+
+    .project-info {
+      padding: 30px;
+    }
+    .project-info h3 { font-size: 1.4rem; margin-bottom: 10px; }
+    .project-info p { color: #6B7280; margin-bottom: 20px; }
+    .tags {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+    }
+    .tag {
+      background: var(--brand-50);
+      color: var(--brand-600);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    .links {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--brand-500);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--brand-600); }
+    .btn-outline {
+      border: 2px solid var(--brand-300);
+      color: var(--brand-600);
+    }
+    .btn-outline:hover { background: var(--brand-50); }
+
+    /* 功能列表 */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .feature {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+    .feature .icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature h4 { font-size: 1rem; margin-bottom: 6px; }
+    .feature p { font-size: 0.85rem; color: #6B7280; }
+
+    /* 技术栈 */
+    .tech-stack {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+    }
+    .tech {
+      background: white;
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9CA3AF;
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--brand-500); }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="emoji">🍽️</div>
+    <h1>今晚吃什么</h1>
+    <p>AI 智能菜谱推荐助手 — 打字说、拍食材，告诉你想吃啥，给你时令食谱和附近餐厅</p>
+  </div>
+
+  <!-- 项目展示 -->
+  <section>
+    <div class="container">
+      <div class="project-card">
+        <div class="project-preview">
+          <!-- 手机模拟图 -->
+          <div class="phone-mockup">
+            <div class="mockup-header">🍽️ 今晚吃什么</div>
+            <div class="mockup-body">
+              <div class="big-emoji">🍜</div>
+              <div class="title">今天想吃什么？</div>
+              <div class="subtitle">告诉我你的口味，帮你找到最合适的菜</div>
+              <div class="mockup-search">🔍 比如："天热想吃清爽酸辣的"</div>
+              <div class="mockup-btn">📸 拍照搜菜</div>
+              <div class="mockup-btn" style="background:white; color:var(--brand-500); border:2px dashed var(--brand-300);">🎲 随便看看</div>
+            </div>
+            <div class="mockup-tabs">
+              <span style="color:var(--brand-500);">🏠 首页</span>
+              <span>🔍 菜谱</span>
+              <span>🏪 餐厅</span>
+              <span>👤 我的</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-info">
+          <h3>📱 AI 驱动的智能菜谱推荐</h3>
+          <p>再也不用纠结"今晚吃什么"了！三种方式告诉系统你想吃啥，AI 理解你的口味，结合季节时令和地理位置，给你最合适的菜谱和附近餐厅推荐。</p>
+          <div class="tags">
+            <span class="tag">Next.js 14</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">AI 推荐</span>
+            <span class="tag">DeepSeek</span>
+            <span class="tag">Claude</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">Prisma</span>
+            <span class="tag">SQLite</span>
+          </div>
+          <div class="links">
+            <a href="#" class="btn btn-primary">🔗 查看项目</a>
+            <a href="#" class="btn btn-outline">⭐ Star on GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心功能 -->
+  <section>
+    <div class="container">
+      <h2>✨ 核心功能</h2>
+      <div class="features">
+        <div class="feature">
+          <div class="icon">💬</div>
+          <h4>自然语言搜索</h4>
+          <p>用日常语言描述口味，AI 理解意图并匹配菜谱</p>
+        </div>
+        <div class="feature">
+          <div class="icon">📸</div>
+          <h4>拍照识别食材</h4>
+          <p>拍冰箱/食材照片，自动识别并推荐能做的菜</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🌞</div>
+          <h4>季节时令推荐</h4>
+          <p>根据当前季节自动推荐当季食材和应季菜品</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🏪</div>
+          <h4>附近餐厅搜索</h4>
+          <p>获取你的位置，推荐周边能吃到对应菜品的餐厅</p>
+        </div>
+        <div class="feature">
+          <div class="icon">👤</div>
+          <h4>个人偏好记忆</h4>
+          <p>注册账号，记住辣度、忌口、菜系偏好</p>
+        </div>
+        <div class="feature">
+          <div class="icon">📖</div>
+          <h4>63 道菜谱库</h4>
+          <p>内置中式家常菜谱，含完整食材和步骤说明</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 技术栈 -->
+  <section>
+    <div class="container">
+      <h2>🛠 技术栈</h2>
+      <div class="tech-stack">
+        <span class="tech">Next.js 14</span>
+        <span class="tech">TypeScript</span>
+        <span class="tech">Tailwind CSS</span>
+        <span class="tech">Prisma ORM</span>
+        <span class="tech">SQLite</span>
+        <span class="tech">NextAuth.js</span>
+        <span class="tech">DeepSeek AI</span>
+        <span class="tech">Claude AI</span>
+        <span class="tech">高德地图 API</span>
+        <span class="tech">Docker</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Built with ❤️ | <a href="#">GitHub</a></p>
+  </footer>
+
+</body>
+</html>
