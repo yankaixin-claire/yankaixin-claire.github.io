@@ -1,0 +1,21 @@
+{
+  "name": "周易运势",
+  "short_name": "周易运势",
+  "description": "每日宜忌、卦象占卜、AI 运势解读",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f7ff",
+  "theme_color": "#a855f7",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
