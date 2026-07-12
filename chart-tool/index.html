@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 可编辑图表工具</title>
+<style>
+/* ========================================
+   CSS Reset & Base
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #e8f4fd;
+  --surface: #ffffff;
+  --primary: #1a73e8;
+  --primary-hover: #1557b0;
+  --primary-light: #e8f0fe;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --border: #dadce0;
+  --border-focus: #1a73e8;
+  --danger: #ea4335;
+  --danger-hover: #d33426;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.10);
+  --radius: 8px;
+  --radius-sm: 6px;
+  --transition: 0.2s ease;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ========================================
+   Header
+   ======================================== */
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+}
+.app-header .version {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--primary-light);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* ========================================
+   Layout
+   ======================================== */
+.app-body {
+  display: flex;
+  min-height: calc(100vh - 57px);
+}
+
+/* ========================================
+   Sidebar
+   ======================================== */
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ctrl-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Chart type selector */
+.chart-types {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.chart-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.chart-type-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.chart-type-btn.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+.chart-type-btn .icon {
+  font-size: 22px;
+}
+
+/* Input fields */
+input[type="text"], select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border var(--transition);
+  background: var(--surface);
+}
+input[type="text"]:focus, select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(26,115,232,0.15);
+}
+
+/* Color scheme */
+.color-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.color-preset-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all var(--transition);
+}
+.color-preset-dot:hover {
+  transform: scale(1.15);
+}
+.color-preset-dot.active {
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--text);
+}
+
+/* File upload */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.upload-zone .upload-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 4px;
+}
+.upload-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+.btn-icon {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.btn-icon:hover {
+  background: #f1f3f4;
+}
+.btn-icon.danger:hover {
+  background: #fce8e6;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* ========================================
+   Main Area
+   ======================================== */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+/* ========================================
+   Table
+   ======================================== */
+.table-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+  overflow-x: auto;
+}
+.table-container h3 {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.data-table th, .data-table td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  min-width: 90px;
+  text-align: left;
+}
+.data-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: var(--text);
+  position: relative;
+}
+.data-table td {
+  background: var(--surface);
+}
+.data-table th[contenteditable="true"]:focus,
+.data-table td[contenteditable="true"]:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  background: #fef7e0;
+}
+.data-table .action-cell {
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
+}
+.data-table .add-row-cell {
+  text-align: center;
+  padding: 8px;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 13px;
+  border: 1px dashed var(--border);
+  transition: all var(--transition);
+}
+.data-table .add-row-cell:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+/* ========================================
+   Chart
+   ======================================== */
+.chart-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  flex: 1;
+  min-height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.chart-container canvas {
+  max-width: 100%;
+  max-height: 450px;
+}
+.chart-empty {
+  color: var(--text-secondary);
+  font-size: 15px;
+  text-align: center;
+}
+
+/* ========================================
+   Toast
+   ======================================== */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 14px;
+  box-shadow: var(--shadow-md);
+  animation: slideIn 0.3s ease;
+  max-width: 360px;
+}
+.toast.success { background: #0d904f; }
+.toast.error   { background: #ea4335; }
+.toast.warning { background: #f59500; }
+.toast.info    { background: var(--primary); }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 768px) {
+  .app-body {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  .sidebar .ctrl-group {
+    flex: 1 1 140px;
+    min-width: 120px;
+  }
+  .chart-types {
+    grid-template-columns: repeat(4, 1fr);
+    flex: 1 1 100%;
+  }
+  .main-area {
+    padding: 12px 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <h1>📊 可编辑图表工具</h1>
+    <span class="version">v1.0</span>
+  </header>
+
+  <!-- Body -->
+  <div class="app-body">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <!-- Chart Type -->
+      <div class="ctrl-group">
+        <label>📈 图表类型</label>
+        <div class="chart-types" id="chartTypes">
+          <button class="chart-type-btn active" data-type="bar">
+            <span class="icon">📊</span>柱状图
+          </button>
+          <button class="chart-type-btn" data-type="line">
+            <span class="icon">📉</span>折线图
+          </button>
+          <button class="chart-type-btn" data-type="pie">
+            <span class="icon">🥧</span>饼图
+          </button>
+          <button class="chart-type-btn" data-type="scatter">
+            <span class="icon">🔵</span>散点图
+          </button>
+        </div>
+      </div>
+
+      <!-- Chart Settings -->
+      <div class="ctrl-group">
+        <label>✏️ 图表标题</label>
+        <input type="text" id="chartTitle" placeholder="输入图表标题" value="月度销售数据">
+      </div>
+      <div class="ctrl-group" id="xLabelGroup">
+        <label>📐 X 轴标签</label>
+        <input type="text" id="xLabel" placeholder="X 轴" value="月份">
+      </div>
+      <div class="ctrl-group" id="yLabelGroup">
+        <label>📏 Y 轴标签</label>
+        <input type="text" id="yLabel" placeholder="Y 轴" value="金额（万元）">
+      </div>
+
+      <!-- Color Scheme -->
+      <div class="ctrl-group">
+        <label>🎨 配色方案</label>
+        <div class="color-presets" id="colorPresets"></div>
+        <select id="colorScheme" style="margin-top:4px;">
+          <option value="blue">蓝色（默认）</option>
+          <option value="green">绿色</option>
+          <option value="orange">橙色</option>
+          <option value="purple">紫色</option>
+          <option value="pink">粉色</option>
+          <option value="gray">灰色</option>
+        </select>
+      </div>
+
+      <!-- File Upload -->
+      <div class="ctrl-group">
+        <label>📁 上传数据</label>
+        <div class="upload-zone" id="uploadZone">
+          <span class="upload-icon">📂</span>
+          点击或拖拽上传文件
+          <div class="upload-hint">支持 .csv / .xlsx / .xls（≤ 5MB）</div>
+        </div>
+        <input type="file" id="fileInput" accept=".csv,.xls,.xlsx" hidden>
+      </div>
+
+      <!-- Export -->
+      <button class="btn btn-primary" id="exportBtn">
+        📥 导出 PNG
+      </button>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-area">
+      <!-- Data Table -->
+      <div class="table-container">
+        <h3>📋 数据表格 <span style="font-weight:400;font-size:12px;color:var(--text-secondary);">（点击单元格编辑）</span></h3>
+        <div id="tableWrapper"></div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container" id="chartContainer">
+        <canvas id="chartCanvas"></canvas>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CDN Scripts (loaded in order, blocking for guaranteed availability) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+/* ========================================
+   可编辑图表工具 — Application Logic
+   ======================================== */
+
+// ==========================================
+// Color Schemes
+// ==========================================
+const COLOR_SCHEMES = {
+  blue:   { bg: ['#1a73e8','#4285f4','#669df6','#8ab4f8','#aecbfa'], border: ['#1557b0','#3367d6','#4d8be6','#6ba0f0','#94baf8'] },
+  green:  { bg: ['#0d904f','#34a853','#5bb974','#81c995','#a8dab5'], border: ['#0a703e','#298a43','#49965e','#6aad7c','#94c9a4'] },
+  orange: { bg: ['#e8710a','#f59500','#f6ad3e','#f7c171','#f9d49e'], border: ['#c25d08','#d48100','#e0952b','#e8a84e','#f0c27a'] },
+  purple: { bg: ['#7627b5','#9334e6','#a660e3','#bb86e0','#d0a8ed'], border: ['#5e1f91','#7b29c2','#8f4fd0','#a46ed8','#c090e4'] },
+  pink:   { bg: ['#c5224c','#e91e63','#ed4b82','#f06292','#f48fb1'], border: ['#a11b3e','#c2185b','#d63e6e','#e84f7d','#ed7d9e'] },
+  gray:   { bg: ['#5f6368','#80868b','#9aa0a6','#bdc1c6','#dadce0'], border: ['#4a4e52','#6a6f73','#83888d','#a5a9ae','#c4c7cb'] },
+};
+
+// ==========================================
+// Toast Notification
+// ==========================================
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'fadeOut 0.4s ease forwards';
+    setTimeout(() => toast.remove(), 400);
+  }, 2500);
+}
+
+// ==========================================
+// Data Store (Pub-Sub)
+// ==========================================
+const Store = {
+  headers: ['月份', '销售额', '利润'],
+  rows: [
+    ['1月', 120, 45],
+    ['2月', 150, 55],
+    ['3月', 180, 60],
+    ['4月', 200, 70],
+    ['5月', 165, 58],
+  ],
+  chartType: 'bar',
+  title: '月度销售数据',
+  xLabel: '月份',
+  yLabel: '金额（万元）',
+  colorScheme: 'blue',
+  customColors: null,
+
+  _listeners: [],
+  _silent: false,
+
+  subscribe(fn) {
+    this._listeners.push(fn);
+    return () => { this._listeners = this._listeners.filter(f => f !== fn); };
+  },
+
+  notify() {
+    if (this._silent) return;
+    this._listeners.forEach(fn => fn(this));
+  },
+
+  set(key, value) {
+    this[key] = value;
+    this.notify();
+  },
+
+  setSilent(key, value) {
+    this[key] = value;
+  },
+
+  getColors() {
+    if (this.customColors && this.customColors.length > 0) {
+      return {
+        bg: this.customColors,
+        border: this.customColors,
+      };
+    }
+    return COLOR_SCHEMES[this.colorScheme] || COLOR_SCHEMES.blue;
+  },
+
+  getDataForChart() {
+    const { headers, rows, chartType, title } = this;
+    const colors = this.getColors();
+
+    if (!rows.length || !headers.length) {
+      return { labels: [], datasets: [] };
+    }
+
+    if (chartType === 'pie') {
+      const labels = rows.map(r => String(r[0] || ''));
+      const data = rows.map(r => parseFloat(r[1]) || 0);
+      return {
+        labels,
+        datasets: [{
+          label: headers[1] || '值',
+          data,
+          backgroundColor: colors.bg,
+          borderColor: '#fff',
+          borderWidth: 2,
+        }],
+      };
+    }
+
+    if (chartType === 'scatter') {
+      return {
+        datasets: [{
+          label: title || '数据',
+          data: rows.map(r => ({
+            x: parseFloat(r[1]) || 0,
+            y: parseFloat(r[2]) || 0,
+          })),
+          backgroundColor: colors.bg[0],
+          borderColor: colors.border[0],
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        }],
+      };
+    }
+
+    // bar, line
+    const labels = rows.map(r => String(r[0] || ''));
+    const datasets = [];
+    for (let i = 1; i < headers.length; i++) {
+      const ci = (i - 1) % colors.bg.length;
+      datasets.push({
+        label: headers[i] || `系列 ${i}`,
+        data: rows.map(r => parseFloat(r[i]) || 0),
+        backgroundColor: chartType === 'line' ? colors.bg[ci] + '30' : colors.bg[ci],
+        borderColor: colors.border[ci],
+        borderWidth: 2,
+        tension: chartType === 'line' ? 0.3 : undefined,
+        fill: chartType === 'line' ? false : undefined,
+      });
+    }
+    return { labels, datasets };
+  },
+};
+
+// ==========================================
+// Table Renderer
+// ==========================================
+const TableRenderer = {
+  wrapper: null,
+
+  init(store) {
+    this.wrapper = document.getElementById('tableWrapper');
+    this.render(store);
+    store.subscribe(s => this.render(s));
+  },
+
+  render(store) {
+    const { headers, rows } = store;
+    let html = '<table class="data-table"><thead><tr>';
+
+    // Header cells
+    for (let i = 0; i < headers.length; i++) {
+      html += `<th contenteditable="true" data-col="${i}" data-field="header">${this.esc(headers[i])}</th>`;
+    }
+    // Add column button
+    html += `<th class="action-cell"><button class="btn-icon" id="addColBtn" title="添加列">+</button></th>`;
+    html += '</tr></thead><tbody>';
+
+    // Data rows
+    for (let ri = 0; ri < rows.length; ri++) {
+      html += '<tr>';
+      for (let ci = 0; ci < headers.length; ci++) {
+        const val = ci < rows[ri].length ? rows[ri][ci] : '';
+        html += `<td contenteditable="true" data-row="${ri}" data-col="${ci}" data-field="cell">${this.esc(val)}</td>`;
+      }
+      html += `<td class="action-cell"><button class="btn-icon danger" data-action="delRow" data-row="${ri}" title="删除行">×</button></td>`;
+      html += '</tr>';
+    }
+
+    // Add row button
+    const colSpan = headers.length + 1;
+    html += `<tr><td class="add-row-cell" id="addRowBtn" colspan="${colSpan}">+ 添加行</td></tr>`;
+    html += '</tbody></table>';
+
+    this.wrapper.innerHTML = html;
+    this.bindEvents(store);
+  },
+
+  esc(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  },
+
+  bindEvents(store) {
+    // Add column
+    const addColBtn = document.getElementById('addColBtn');
+    if (addColBtn) {
+      addColBtn.addEventListener('click', () => {
+        const newHeaders = [...store.headers, `列 ${store.headers.length + 1}`];
+        const newRows = store.rows.map(r => [...r, '']);
+        store.set('headers', newHeaders);
+        store.set('rows', newRows);
+      });
+    }
+
+    // Add row
+    const addRowBtn = document.getElementById('addRowBtn');
+    if (addRowBtn) {
+      addRowBtn.addEventListener('click', () => {
+        const newRow = new Array(store.headers.length).fill('');
+        store.set('rows', [...store.rows, newRow]);
+      });
+    }
+
+    // Delete row buttons
+    document.querySelectorAll('[data-action="delRow"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ri = parseInt(btn.dataset.row);
+        if (store.rows.length <= 1) {
+          showToast('至少保留一行数据', 'warning');
+          return;
+        }
+        const newRows = store.rows.filter((_, i) => i !== ri);
+        store.set('rows', newRows);
+      });
+    });
+
+    // Editable cells - sync to store on blur
+    document.querySelectorAll('[contenteditable="true"]').forEach(cell => {
+      cell.addEventListener('blur', () => {
+        this.syncToStore(store);
+      });
+      // Enter key moves to next cell
+      cell.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          cell.blur();
+          this.syncToStore(store);
+        }
+      });
+    });
+  },
+
+  syncToStore(store) {
+    // Read headers
+    const newHeaders = [];
+    document.querySelectorAll('th[data-field="header"]').forEach(th => {
+      newHeaders.push(th.textContent.trim() || '列名');
+    });
+
+    // Read rows
+    const newRows = [];
+    const rowSet = new Set();
+    document.querySelectorAll('td[data-field="cell"]').forEach(td => {
+      const ri = parseInt(td.dataset.row);
+      const ci = parseInt(td.dataset.col);
+      if (!newRows[ri]) newRows[ri] = [];
+      newRows[ri][ci] = td.textContent.trim();
+      rowSet.add(ri);
+    });
+
+    // Fill missing cells
+    const colCount = newHeaders.length;
+    const rowsArray = [];
+    for (let ri = 0; ri <= Math.max(...rowSet, 0); ri++) {
+      const row = [];
+      for (let ci = 0; ci < colCount; ci++) {
+        row.push((newRows[ri] && newRows[ri][ci] !== undefined) ? newRows[ri][ci] : '');
+      }
+      rowsArray.push(row);
+    }
+
+    store._silent = true;
+    store.setSilent('headers', newHeaders);
+    store.setSilent('rows', rowsArray);
+    store._silent = false;
+    ChartRenderer.update(store);
+  },
+};
+
+// ==========================================
+// Chart Renderer
+// ==========================================
+const ChartRenderer = {
+  chart: null,
+  canvas: null,
+  container: null,
+
+  init(store) {
+    this.canvas = document.getElementById('chartCanvas');
+    this.container = document.getElementById('chartContainer');
+    this.render(store);
+    store.subscribe(s => this.onStoreChange(s));
+  },
+
+  onStoreChange(store) {
+    if (store._silent) return; // Don't re-render if table triggered silent update
+    this.render(store);
+  },
+
+  render(store) {
+    const chartData = store.getDataForChart();
+
+    if (!chartData.labels.length && !chartData.datasets.length) {
+      this.destroy();
+      this.container.innerHTML = '<div class="chart-empty">📭 暂无数据，请在表格中添加数据</div>';
+      return;
+    }
+
+    // Restore canvas if it was replaced
+    if (!this.container.contains(this.canvas)) {
+      this.container.innerHTML = '';
+      this.container.appendChild(this.canvas);
+    }
+
+    const type = store.chartType;
+    const isPieOrScatter = (type === 'pie' || type === 'scatter');
+
+    const config = {
+      type: type,
+      data: chartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        animation: { duration: 300 },
+        plugins: {
+          title: {
+            display: !!store.title,
+            text: store.title,
+            font: { size: 16, weight: '600' },
+            padding: { bottom: 16 },
+          },
+          legend: {
+            display: type !== 'scatter',
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                if (type === 'scatter') {
+                  return `(${ctx.raw.x}, ${ctx.raw.y})`;
+                }
+                return `${ctx.dataset.label}: ${ctx.raw}`;
+              }
+            }
+          }
+        },
+        scales: isPieOrScatter ? {} : {
+          x: {
+            title: {
+              display: !!store.xLabel,
+              text: store.xLabel,
+              font: { size: 13, weight: '500' },
+            },
+          },
+          y: {
+            title: {
+              display: !!store.yLabel,
+              text: store.yLabel,
+              font: { size: 13, weight: '500' },
+            },
+            beginAtZero: true,
+          },
+        },
+      },
+    };
+
+    if (this.chart) {
+      // Update existing chart
+      this.chart.config.type = type;
+      this.chart.data = chartData;
+      this.chart.options = config.options;
+      this.chart.update();
+    } else {
+      this.chart = new Chart(this.canvas, config);
+    }
+  },
+
+  update(store) {
+    if (!this.chart) return;
+    const chartData = store.getDataForChart();
+    this.chart.config.type = store.chartType;
+    this.chart.data = chartData;
+
+    const type = store.chartType;
+    const isPieOrScatter = (type === 'pie' || type === 'scatter');
+    this.chart.options.plugins.title.text = store.title;
+    if (!isPieOrScatter) {
+      if (this.chart.options.scales.x && this.chart.options.scales.x.title) {
+        this.chart.options.scales.x.title.text = store.xLabel;
+      }
+      if (this.chart.options.scales.y && this.chart.options.scales.y.title) {
+        this.chart.options.scales.y.title.text = store.yLabel;
+      }
+    }
+
+    // Handle scatter scales visibility
+    if (this.chart.options.scales) {
+      this.chart.options.scales = isPieOrScatter ? {} : {
+        x: {
+          title: { display: !!store.xLabel, text: store.xLabel, font: { size: 13, weight: '500' } },
+        },
+        y: {
+          title: { display: !!store.yLabel, text: store.yLabel, font: { size: 13, weight: '500' } },
+          beginAtZero: true,
+        },
+      };
+    }
+
+    this.chart.update();
+  },
+
+  destroy() {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+  },
+};
+
+// ==========================================
+// File Handler
+// ==========================================
+const FileHandler = {
+  init(store) {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+
+    // Click to select
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    // File selected via input
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        this.processFile(e.target.files[0], store);
+        fileInput.value = '';
+      }
+    });
+
+    // Drag and drop
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('drag-over');
+    });
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) {
+        this.processFile(e.dataTransfer.files[0], store);
+      }
+    });
+
+    // Also support drop on the entire body
+    document.body.addEventListener('dragover', (e) => e.preventDefault());
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length > 0) {
+        this.processFile(e.dataTransfer.files[0], store);
+      }
+    });
+  },
+
+  processFile(file, store) {
+    // Size check
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_SIZE) {
+      showToast(`文件过大（${(file.size / 1024 / 1024).toFixed(1)}MB），请上传小于 5MB 的文件`, 'error');
+      return;
+    }
+
+    const name = file.name.toLowerCase();
+    const ext = name.substring(name.lastIndexOf('.'));
+
+    if (ext === '.csv') {
+      this.parseCSV(file, store);
+    } else if (ext === '.xlsx' || ext === '.xls') {
+      this.parseExcel(file, store);
+    } else {
+      showToast('不支持的文件格式，请上传 .csv / .xlsx / .xls 文件', 'warning');
+    }
+  },
+
+  parseCSV(file, store) {
+    Papa.parse(file, {
+      header: false,
+      skipEmptyLines: true,
+      complete: (results) => {
+        if (!results.data || results.data.length === 0) {
+          showToast('CSV 文件为空', 'warning');
+          return;
+        }
+        const data = results.data;
+        const headers = data[0].map((h, i) => String(h || '').trim() || `列 ${i + 1}`);
+        const rows = data.slice(1).filter(r => r.some(c => String(c).trim() !== ''));
+        if (rows.length === 0) {
+          showToast('CSV 文件中没有数据行', 'warning');
+          return;
+        }
+        // Pad rows to match header count
+        const paddedRows = rows.map(r => {
+          const row = [];
+          for (let i = 0; i < headers.length; i++) {
+            row.push(r[i] !== undefined ? String(r[i]).trim() : '');
+          }
+          return row;
+        });
+        store.set('headers', headers);
+        store.set('rows', paddedRows);
+        showToast(`✅ 成功导入 ${paddedRows.length} 行数据`, 'success');
+      },
+      error: (err) => {
+        showToast(`CSV 解析失败: ${err.message}`, 'error');
+      },
+    });
+  },
+
+  parseExcel(file, store) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+
+        if (!jsonData || jsonData.length === 0) {
+          showToast('Excel 文件为空', 'warning');
+          return;
+        }
+
+        const headers = jsonData[0].map((h, i) => String(h || '').trim() || `列 ${i + 1}`);
+        const rows = jsonData.slice(1).filter(r => r.some(c => String(c).trim() !== ''));
+
+        if (rows.length === 0) {
+          showToast('Excel 文件中没有数据行', 'warning');
+          return;
+        }
+
+        const paddedRows = rows.map(r => {
+          const row = [];
+          for (let i = 0; i < headers.length; i++) {
+            row.push(r[i] !== undefined ? String(r[i]).trim() : '');
+          }
+          return row;
+        });
+
+        store.set('headers', headers);
+        store.set('rows', paddedRows);
+        showToast(`✅ 成功导入 ${paddedRows.length} 行数据`, 'success');
+      } catch (err) {
+        showToast(`Excel 解析失败: ${err.message}`, 'error');
+      }
+    };
+    reader.onerror = () => showToast('文件读取失败', 'error');
+    reader.readAsArrayBuffer(file);
+  },
+};
+
+// ==========================================
+// Export Handler
+// ==========================================
+const ExportHandler = {
+  init(store) {
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      this.exportPNG();
+    });
+  },
+
+  async exportPNG() {
+    const container = document.getElementById('chartContainer');
+    const btn = document.getElementById('exportBtn');
+
+    if (!ChartRenderer.chart) {
+      showToast('没有可导出的图表', 'warning');
+      return;
+    }
+
+    btn.textContent = '⏳ 导出中...';
+    btn.disabled = true;
+
+    try {
+      const canvas = await html2canvas(container, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true,
+      });
+
+      const now = new Date();
+      const ts = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
+      const filename = `图表_${ts}.png`;
+
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`✅ 图表已导出: ${filename}`, 'success');
+      }, 'image/png');
+    } catch (err) {
+      showToast(`导出失败: ${err.message}`, 'error');
+    } finally {
+      btn.textContent = '📥 导出 PNG';
+      btn.disabled = false;
+    }
+  },
+};
+
+// ==========================================
+// UI Bindings (Sidebar controls)
+// ==========================================
+function bindUI(store) {
+  // Chart type buttons
+  document.querySelectorAll('.chart-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      store.set('chartType', btn.dataset.type);
+      updateAxisVisibility(btn.dataset.type);
+    });
+  });
+
+  // Title input
+  const titleInput = document.getElementById('chartTitle');
+  titleInput.addEventListener('input', () => {
+    store.set('title', titleInput.value);
+  });
+
+  // X Label
+  const xLabelInput = document.getElementById('xLabel');
+  xLabelInput.addEventListener('input', () => {
+    store.set('xLabel', xLabelInput.value);
+  });
+
+  // Y Label
+  const yLabelInput = document.getElementById('yLabel');
+  yLabelInput.addEventListener('input', () => {
+    store.set('yLabel', yLabelInput.value);
+  });
+
+  // Color scheme dropdown
+  const colorSelect = document.getElementById('colorScheme');
+  colorSelect.addEventListener('change', () => {
+    store.set('colorScheme', colorSelect.value);
+    updateColorDots(colorSelect.value);
+  });
+
+  // Color dots
+  renderColorDots(store);
+  document.getElementById('colorPresets').addEventListener('click', (e) => {
+    const dot = e.target.closest('.color-preset-dot');
+    if (!dot) return;
+    const scheme = dot.dataset.scheme;
+    store.set('colorScheme', scheme);
+    document.getElementById('colorScheme').value = scheme;
+    updateColorDots(scheme);
+  });
+}
+
+function updateAxisVisibility(chartType) {
+  const isPieOrScatter = (chartType === 'pie' || chartType === 'scatter');
+  document.getElementById('xLabelGroup').style.opacity = isPieOrScatter ? '0.4' : '1';
+  document.getElementById('yLabelGroup').style.opacity = isPieOrScatter ? '0.4' : '1';
+  document.getElementById('xLabel').disabled = isPieOrScatter;
+  document.getElementById('yLabel').disabled = isPieOrScatter;
+}
+
+function renderColorDots(store) {
+  const container = document.getElementById('colorPresets');
+  let html = '';
+  for (const [name, colors] of Object.entries(COLOR_SCHEMES)) {
+    const active = store.colorScheme === name ? ' active' : '';
+    html += `<span class="color-preset-dot${active}" data-scheme="${name}" style="background:${colors.bg[0]};" title="${name}"></span>`;
+  }
+  container.innerHTML = html;
+}
+
+function updateColorDots(scheme) {
+  document.querySelectorAll('.color-preset-dot').forEach(dot => {
+    dot.classList.toggle('active', dot.dataset.scheme === scheme);
+  });
+}
+
+// ==========================================
+// Init
+// ==========================================
+function init() {
+  // Check required libraries
+  if (typeof Chart === 'undefined') {
+    document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#ea4335;">⚠️ Chart.js 加载失败，请检查网络连接</div>';
+    return;
+  }
+
+  bindUI(Store);
+  TableRenderer.init(Store);
+  ChartRenderer.init(Store);
+  FileHandler.init(Store);
+  ExportHandler.init(Store);
+
+  // Initial axis visibility based on default chart type
+  updateAxisVisibility(Store.chartType);
+
+  console.log('✅ 可编辑图表工具 v1.0 初始化完成');
+}
+
+// Boot
+init();
+</script>
+
+</body>
+</html>
